@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Conquistas</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    video#bg-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      object-fit: cover;
+    }
+
+    .overlay {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 5px black;
+    }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 15px;
+      min-width: 200px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 2rem;
+      color: #00ffcc;
+    }
+
+    .card p {
+      margin: 5px 0 0;
+    }
+
+    a {
+      margin-top: 20px;
+      display: inline-block;
+      background: #00ffcc;
+      color: black;
+      padding: 10px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    a:hover {
+      background: #00ffaa;
+    }
+  </style>
+</head>
+<body>
+  <video autoplay muted loop id="bg-video">
+    <source src="assets/0-brain-vision-3840x2160_Large.mp4" type="video/mp4">
+    Seu navegador não suporta vídeos em HTML5.
+  </video>
+
+  <div class="overlay">
+    <h1>Suas Conquistas</h1>
+    <div class="stats">
+      <div class="card">
+        <h2>120 XP</h2>
+        <p>Experiência acumulada</p>
+      </div>
+      <div class="card">
+        <h2>15</h2>
+        <p>Conquistas desbloqueadas</p>
+      </div>
+      <div class="card">
+        <h2>72%</h2>
+        <p>Taxa de acertos</p>
+      </div>
+      <div class="card">
+        <h2>08h 45min</h2>
+        <p>Tempo de estudo</p>
+      </div>
+    </div>
+    <a href="dashboard.html">Ir para o Dashboard</a>
+  </div>
+</body>
+</html>
