@@ -1,191 +1,96 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mãos Conectadas</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #fdfdfd;
-      color: #333;
-    }
-    header {
-      background-color: #00856F;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    section.hero {
-      text-align: center;
-      padding: 40px 20px;
-    }
-    section.hero h1 {
-      font-size: 2em;
-      margin-bottom: 10px;
-    }
-    section.hero p {
-      font-size: 1.2em;
-      margin-bottom: 20px;
-    }
-    .cta-button {
-      background-color: #00856F;
-      color: white;
-      padding: 15px 30px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-size: 1em;
-    }
-    form {
-      max-width: 500px;
-      margin: 30px auto;
-      padding: 20px;
-      background-color: #f2f2f2;
-      border-radius: 8px;
-    }
-    form label {
-      display: block;
-      margin: 10px 0 5px;
-    }
-    form input, form select, form textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    form button {
-      background-color: #00856F;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #eee;
-      margin-top: 40px;
-    }
-    .whatsapp-button {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #25D366;
-      color: white;
-      padding: 15px;
-      border-radius: 50%;
-      text-align: center;
-      font-size: 24px;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-      text-decoration: none;
-      z-index: 1000;
-    }
-  </style>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-884426711">
-</script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'AW-884426711');
-</script>
 </head>
 <body>
-  <header>
-    <h1>Mãos Conectadas</h1>
-    <p>Aprenda informática com carinho, no seu tempo</p>
-  </header>
+  <h1>Mãos Conectadas</h1>
 
-  <section class="hero">
-    <h1>Curso de Informática para Idosos</h1>
-    <p>Aulas presenciais em BH ou online para todo o Brasil</p>
-    <a class="cta-button" href="#form">Agende sua aula</a>
-  </section>
+  <!-- Formulário de login -->
+  <div id="login-section">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Digite seu e-mail" />
+    <input type="password" id="password" placeholder="Digite sua senha" />
+    <button id="login-btn">Entrar</button>
+    <button id="logout-btn" style="display:none;">Sair</button>
+  </div>
 
-<!-- ... mantemos o início igual ... -->
+  <!-- Área para exibir dados -->
+  <div id="data-section" style="display:none;">
+    <h2>Dados do Firebase</h2>
+    <pre id="data-output">Carregando...</pre>
+  </div>
 
-<form id="formularioPrincipal" action="https://formsubmit.co/gdcestanislau@gmail.com" method="POST" onsubmit="enviarParaGoogleForms()">
-  <label for="nome">Nome:</label>
-  <input type="text" id="nome" name="nome" required>
+  <!-- Importando Firebase -->
+  <script type="module">
+    // Importa SDKs necessários
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  <label for="telefone">Telefone / WhatsApp:</label>
-  <input type="tel" id="telefone" name="telefone" required>
+    // Configuração do Firebase (seus dados)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDDKn1fV1nzZwEzN5WJtlRKU_BirE9C_as",
+      authDomain: "maos-conectadas.firebaseapp.com",
+      databaseURL: "https://maos-conectadas-default-rtdb.firebaseio.com",
+      projectId: "maos-conectadas",
+      storageBucket: "maos-conectadas.firebasestorage.app",
+      messagingSenderId: "392102353018",
+      appId: "1:392102353018:web:75b0ab1b22b704dcba83c3",
+      measurementId: "G-7TDTH45J64"
+    };
 
-  <label for="cidade">Cidade / Estado:</label>
-  <input type="text" id="cidade" name="cidade">
+    // Inicializa Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
 
-  <label for="modalidade">Tipo de aula:</label>
-  <select id="modalidade" name="modalidade">
-    <option value="online">Online</option>
-    <option value="presencial">Presencial (BH)</option>
-  </select>
+    // Elementos da página
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const dataSection = document.getElementById("data-section");
+    const dataOutput = document.getElementById("data-output");
 
-  <label for="dia">Dia da semana preferido:</label>
-  <select id="dia" name="dia">
-    <option value="segunda">Segunda-feira</option>
-    <option value="terca">Terça-feira</option>
-    <option value="quarta">Quarta-feira</option>
-    <option value="quinta">Quinta-feira</option>
-    <option value="sexta">Sexta-feira</option>
-  </select>
-
-  <label for="horario">Horário preferido:</label>
-  <input type="text" id="horario" name="horario" placeholder="Ex: 8:00h">
-
-  <!-- Extras -->
-  <input type="hidden" name="_captcha" value="false">
-  <input type="hidden" name="_next" value="https://maosconectadas.com.br/obrigado.html">
-
-  <button type="submit">Quero Aprender Agora</button>
-</form>
-
-<script>
-  function enviarParaGoogleForms() {
-    const nome = document.getElementById("nome").value;
-    const telefone = document.getElementById("telefone").value;
-    const cidade = document.getElementById("cidade").value;
-    const modalidade = document.getElementById("modalidade").value;
-    const dia = document.getElementById("dia").value;
-    const horario = document.getElementById("horario").value;
-
-    // Substitua abaixo pelo SEU URL DE FORM ACTION do Google Forms (modo POST invisível)
-    const googleFormsURL = "https://docs.google.com/forms/d/e/SEU_ID_DO_FORMULARIO/formResponse";
-
-    // Dados que correspondem às entradas do seu Google Forms (precisa do 'entry.X' de cada campo)
-    const formData = new FormData();
-    formData.append("entry.1234567890", nome);
-    formData.append("entry.2345678901", telefone);
-    formData.append("entry.3456789012", cidade);
-    formData.append("entry.4567890123", modalidade);
-    formData.append("entry.5678901234", dia);
-    formData.append("entry.6789012345", horario);
-
-    // Envia em paralelo para o Google Forms
-    fetch(googleFormsURL, {
-      method: "POST",
-      mode: "no-cors",
-      body: formData
-    }).then(() => {
-      console.log("Enviado ao Google Forms com sucesso.");
-    }).catch((err) => {
-      console.error("Erro ao enviar para Google Forms:", err);
+    // Login
+    loginBtn.addEventListener("click", async () => {
+      try {
+        await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+        console.log("Login realizado com sucesso");
+      } catch (error) {
+        alert("Erro no login: " + error.message);
+      }
     });
-  }
-</script>
 
+    // Logout
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+    });
 
-  <footer>
-    <p>Atendemos por WhatsApp: (31) 99119-1936</p>
-    <p>&copy; 2025 Mãos Conectadas</p>
-  </footer>
+    // Estado de autenticação
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Usuário logado:", user.email);
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+        dataSection.style.display = "block";
 
-  <a href="https://wa.me/5531991191936" target="_blank" class="whatsapp-button"
-				onclick="gtag('event', 'conversion', {'send_to': 'AW-884426711/hnBpCImU3uwaENeP3aUD'});" target="_blank">💬</a>
+        // Acessa dados do Firebase (exemplo: nó "usuarios")
+        const dataRef = ref(db, "usuarios");
+        onValue(dataRef, (snapshot) => {
+          const data = snapshot.val();
+          dataOutput.textContent = JSON.stringify(data, null, 2);
+        });
+      } else {
+        console.log("Usuário deslogado");
+        loginBtn.style.display = "inline-block";
+        logoutBtn.style.display = "none";
+        dataSection.style.display = "none";
+      }
+    });
+  </script>
 </body>
 </html>
