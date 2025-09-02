@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro - Mãos Conectadas</title>
+  <script type="module">
+    // Importando Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDDKn1fV1nzZwEzN5WJtlRKU_BirE9C_as",
+      authDomain: "maos-conectadas.firebaseapp.com",
+      databaseURL: "https://maos-conectadas-default-rtdb.firebaseio.com",
+      projectId: "maos-conectadas",
+      storageBucket: "maos-conectadas.firebasestorage.app",
+      messagingSenderId: "392102353018",
+      appId: "1:392102353018:web:75b0ab1b22b704dcba83c3",
+      measurementId: "G-7TDTH45J64"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Função de cadastro
+    async function registerUser(event) {
+      event.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (password !== confirmPassword) {
+        alert("As senhas não coincidem!");
+        return;
+      }
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert("Cadastro realizado com sucesso!");
+        window.location.href = "index.html"; // redireciona para login
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    }
+
+    window.registerUser = registerUser;
+  </script>
+
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #000;
+      overflow: hidden;
+    }
+
+    video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .form-container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      text-align: center;
+      color: white;
+      width: 300px;
+      animation: fadeIn 1.5s ease;
+    }
+
+    .form-container h2 {
+      margin-bottom: 20px;
+    }
+
+    .form-container input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .form-container button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .form-container button:hover {
+      background-color: #45a049;
+    }
+
+    .form-container a {
+      color: #ddd;
+      display: block;
+      margin-top: 15px;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .form-container a:hover {
+      color: white;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <video autoplay muted loop>
+    <source src="large.mp4" type="video/mp4">
+    Seu navegador não suporta vídeo em HTML5.
+  </video>
+
+  <div class="form-container">
+    <h2>Cadastro de Aluno</h2>
+    <form onsubmit="registerUser(event)">
+      <input type="text" id="name" placeholder="Nome Completo" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Senha" required>
+      <input type="password" id="confirmPassword" placeholder="Confirmar Senha" required>
+      <button type="submit">Cadastrar</button>
+    </form>
+    <a href="index.html">Já possui conta? Entrar</a>
+  </div>
+</body>
+</html>
